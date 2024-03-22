@@ -7,6 +7,8 @@ Stack:
   - typescript
 - engine
   - express
+- database
+  - postgres
 - logger:
   - winston
 - routing
