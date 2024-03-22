@@ -22,14 +22,66 @@
 					"password": {
 						"type": "string"
 					},
+					"created": {
+						"type": "string"
+					},
 					"deleted": {
 						"type": "boolean"
 					}
 				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Pick_User.id-or-name-or-email-or-password-or-deleted_": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"name": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"deleted": {
+						"type": "boolean"
+					}
+				},
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"TableInfo": {
+				"properties": {
+					"count": {
+						"type": "number",
+						"format": "double"
+					}
+				},
 				"required": [
-					"name",
-					"email",
-					"password"
+					"count"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"PaginatedTable_User_": {
+				"properties": {
+					"items": {
+						"items": {
+							"$ref": "#/components/schemas/User"
+						},
+						"type": "array"
+					},
+					"info": {
+						"$ref": "#/components/schemas/TableInfo"
+					}
+				},
+				"required": [
+					"items",
+					"info"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -43,6 +95,7 @@
 							"name",
 							"email",
 							"password",
+							"created",
 							"deleted"
 						],
 						"nullable": false
@@ -99,6 +152,21 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"Pick_User.name-or-email-or-password_": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
 			"Pick_User.email-or-password_": {
 				"properties": {
 					"email": {
@@ -108,10 +176,6 @@
 						"type": "string"
 					}
 				},
-				"required": [
-					"email",
-					"password"
-				],
 				"type": "object",
 				"description": "From T, pick a set of properties whose keys are in the union K"
 			}
@@ -193,7 +257,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/User"
+								"$ref": "#/components/schemas/Pick_User.id-or-name-or-email-or-password-or-deleted_"
 							}
 						}
 					}
@@ -209,17 +273,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"anyOf": [
-										{
-											"items": {
-												"$ref": "#/components/schemas/User"
-											},
-											"type": "array"
-										},
-										{
-											"$ref": "#/components/schemas/User"
-										}
-									]
+									"$ref": "#/components/schemas/PaginatedTable_User_"
 								}
 							}
 						}
@@ -273,7 +327,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/User"
+								"$ref": "#/components/schemas/Pick_User.name-or-email-or-password_"
 							}
 						}
 					}

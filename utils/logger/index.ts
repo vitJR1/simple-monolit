@@ -5,7 +5,7 @@ const logFormat = winston.format.printf((info) =>
 	`[${date}] ${info.level}: ${JSON.stringify({ ...info, level: undefined })}\n`
 )
 
-const logger = winston.createLogger({
+global.logger = winston.createLogger({
 	format: winston.format.json(),
 	defaultMeta: { service: '', category: 'gateway' },
 	transports: [
@@ -15,6 +15,3 @@ const logger = winston.createLogger({
 		})
 	]
 })
-
-
-export default logger

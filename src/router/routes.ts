@@ -15,10 +15,33 @@ const models: TsoaRoute.Models = {
         "dataType": "refObject",
         "properties": {
             "id": {"dataType":"double"},
-            "name": {"dataType":"string","required":true},
-            "email": {"dataType":"string","required":true},
-            "password": {"dataType":"string","required":true},
+            "name": {"dataType":"string"},
+            "email": {"dataType":"string"},
+            "password": {"dataType":"string"},
+            "created": {"dataType":"string"},
             "deleted": {"dataType":"boolean"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Pick_User.id-or-name-or-email-or-password-or-deleted_": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"id":{"dataType":"double"},"name":{"dataType":"string"},"email":{"dataType":"string"},"password":{"dataType":"string"},"deleted":{"dataType":"boolean"}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "TableInfo": {
+        "dataType": "refObject",
+        "properties": {
+            "count": {"dataType":"double","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "PaginatedTable_User_": {
+        "dataType": "refObject",
+        "properties": {
+            "items": {"dataType":"array","array":{"dataType":"refObject","ref":"User"},"required":true},
+            "info": {"ref":"TableInfo","required":true},
         },
         "additionalProperties": false,
     },
@@ -26,7 +49,7 @@ const models: TsoaRoute.Models = {
     "OrderBy_User_": {
         "dataType": "refObject",
         "properties": {
-            "field": {"dataType":"enum","enums":["id","name","email","password","deleted"],"required":true},
+            "field": {"dataType":"enum","enums":["id","name","email","password","created","deleted"],"required":true},
             "by": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["ASC"]},{"dataType":"enum","enums":["DESC"]}],"required":true},
         },
         "additionalProperties": false,
@@ -52,9 +75,14 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Pick_User.name-or-email-or-password_": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"name":{"dataType":"string"},"email":{"dataType":"string"},"password":{"dataType":"string"}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Pick_User.email-or-password_": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"email":{"dataType":"string","required":true},"password":{"dataType":"string","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"email":{"dataType":"string"},"password":{"dataType":"string"}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 };
@@ -100,7 +128,7 @@ export function RegisterRoutes(app: Router) {
 
             function UserController_saveUser(request: any, response: any, next: any) {
             const args = {
-                    user: {"in":"body","name":"user","required":true,"ref":"User"},
+                    user: {"in":"body","name":"user","required":true,"ref":"Pick_User.id-or-name-or-email-or-password-or-deleted_"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -151,7 +179,7 @@ export function RegisterRoutes(app: Router) {
 
             function UserController_userRegistration(request: any, response: any, next: any) {
             const args = {
-                    user: {"in":"body","name":"user","required":true,"ref":"User"},
+                    user: {"in":"body","name":"user","required":true,"ref":"Pick_User.name-or-email-or-password_"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

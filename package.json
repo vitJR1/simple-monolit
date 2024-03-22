@@ -4,8 +4,9 @@
   "private": false,
   "main": "index.ts",
   "scripts": {
+    "build-and-start-ts": "tsoa spec-and-routes && tsc --outDir dist && ts-node .",
     "build": "tsoa spec-and-routes && tsc --outDir dist",
-    "start": "ts-node ."
+    "start": "node dist/index.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
@@ -17,10 +18,12 @@
     "jsonwebtoken": "^9.0.2",
     "morgan": "~1.9.1",
     "morgan-json": "^1.1.0",
+    "pg": "^8.11.3",
     "reflect-metadata": "^0.2.1",
     "swagger-ui-express": "^5.0.0",
     "ts-node": "^10.9.2",
     "tsoa": "^6.0.1",
+    "typeorm": "^0.3.20",
     "winston": "^3.11.0"
   },
   "devDependencies": {

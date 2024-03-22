@@ -1,60 +1,54 @@
-import { User } from '../model/User'
+import { User } from '../entity/User'
 import { UserFilter } from '../filter/UserFilter'
-import logger from '../../../../utils/logger'
 import { TokenPayload } from '../../../utils/TokenPayload'
 import { TsoaResponse } from '@tsoa/runtime'
 import jwt from 'jsonwebtoken'
 import { SECRET_KEY } from '../../../../config'
 import { plainToInstance } from 'class-transformer'
-
-const users: User[] = []
+import {ILike} from "typeorm";
+import {getPaginatedTable, PaginatedTable} from "../../common/PaginatedTable";
 
 export class UserHandler {
 	async getUserById(id: number): Promise<User | null>  {
-		return users.find(u => u.id === id) ?? null
+		return await User.findOneBy({ id })
 	}
 
 	async saveUser(user: User): Promise<User>  {
-		user.id = users.length + 1
-		user.deleted = false
-		users.push(user)
-		return user
+		return await user.save().then(result => {
+			result.password = undefined
+			return result
+		})
 	}
 
-	async userList(filter: UserFilter): Promise<User[]>  {
-		return users
-			.filter(user => {
-				return user.name.toUpperCase().includes((filter.search ?? '').toUpperCase()) && (filter.id === undefined || user.id === filter.id)
-			})
-			.sort((user1: User, user2: User): number => {
-				if(filter.order !== undefined){
-					return ((user1[filter.order.field] ?? 1) > (user2[filter.order.field] ?? 0) ? 1 : -1) * (filter.order.by === "ASC" ? 1 : -1)
-				}
-				return 1
-			})
-			.slice((filter.pagination?.skip ?? 0) * (filter.pagination?.take ?? 0), filter.pagination?.take ?? users.length)
+	async userList(filter: UserFilter): Promise<PaginatedTable<User>>  {
+		return await User.findAndCount({
+			where: {
+				name: ILike(`%${filter.search ?? ''}%`)
+			},
+			order: {
+				[filter.order?.field ?? 'id']: filter.order?.by ?? 'DESC'
+			},
+			...filter.pagination,
+		}).then(getPaginatedTable)
 	}
 
 	async userRegistration (user: User): Promise<User> {
-		const plainedUser = plainToInstance(User, user)
-		plainedUser.id = users.length + 1
-		plainedUser.deleted = false
-		logger.debug(plainedUser.encryptPassword())
-		users.push(plainedUser)
-		console.log(users)
-		return plainedUser
+		return await this.saveUser(user)
 	}
 
 	async userLogin (
 		credentials: Pick<User, 'email' | 'password'>,
 	  error: TsoaResponse<400, string>
 	): Promise<string> {
-		const user = users.find(user => user.email === credentials.email)
-		if(user === undefined){
+		const user = await User.findOne({
+			select: ['id', 'password'],
+			where: { email: credentials.email }
+		})
+		if(user === null){
 			throw error(400, 'User not found')
 		}
 
-		if(!user.validatePassword(credentials.password)){
+		if(!user.validatePassword(credentials.password!)){
 			throw error(400, 'Incorrect login or password')
 		}
 		const payload: TokenPayload = {

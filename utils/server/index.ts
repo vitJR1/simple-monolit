@@ -4,11 +4,12 @@ import morgan from 'morgan'
 import morganJson from 'morgan-json'
 import cookieParser from 'cookie-parser'
 import * as http from 'http'
-import logger from '../logger'
 import swaggerUi from 'swagger-ui-express'
 import swaggerApi from '../../doc/swagger.json'
 import isSwaggerEnabled from '../middleware/isSwaggerEnabled'
 import { RegisterRoutes } from '../../src/router/routes'
+import {addDataSourceToRequest} from "../database/middleware";
+import source from '../database'
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use(morgan(morganJson({
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+source.initialize().then(s => app.use(addDataSourceToRequest(s)))
 
 app.use('/docs', isSwaggerEnabled, swaggerUi.serve, swaggerUi.setup(swaggerApi, { explorer: false }))
 
@@ -42,7 +44,6 @@ const server = http.createServer(app);
 /**
  * Listen on provided port, on all network interfaces.
  */
-
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
